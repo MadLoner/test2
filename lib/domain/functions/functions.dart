@@ -1,12 +1,14 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:test2/domain/services/riverpod/authprovider.dart';
 import 'package:toastification/toastification.dart';
 
 class Functions {
-  static Future<void> checkField(
-      String email, String password, BuildContext context) async {
+  static Future<void> checkField(String email, String password,
+      BuildContext context, WidgetRef ref) async {
     if ((email.isEmpty && password.isEmpty) ||
         (email.isEmpty || password.isEmpty)) {
       toastification.show(
@@ -28,7 +30,9 @@ class Functions {
         type: ToastificationType.success,
         autoCloseDuration: Duration(seconds: 2),
       );
+      ref.read(authProvider.notifier).state = true;
       await Auth(email, password, context);
+      ref.read(authProvider.notifier).state = false;
     } else {
       toastification.show(
         context: context,

@@ -32,8 +32,7 @@ class _TextInputState extends State<TextInput> {
                     isRevieled = !isRevieled;
                   });
                 },
-                icon: SvgPicture.asset(
-                    '/Users/uksivt/Desktop/test2/test2/assets/Eye.svg'),
+                icon: SvgPicture.asset('assets/Eye.svg'),
               )
             : null,
         hintStyle: TextStyle(

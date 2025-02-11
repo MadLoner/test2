@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:test2/presentation/colors/color.dart';
 
 class MyButton extends StatelessWidget {
-  const MyButton({
-    super.key,
-    required this.onTap,
-    required this.title,
-    required this.color,
-  });
+  const MyButton(
+      {super.key,
+      required this.onTap,
+      required this.title,
+      required this.color,
+      required this.titleColor});
 
   final Function()? onTap;
   final String title;
   final Color color;
+  final Color titleColor;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class MyButton extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'New Peninim MT',
                     fontSize: 12,
-                    color: MyColors.backgroundColor,
+                    color: titleColor,
                   ),
                 ),
               ],

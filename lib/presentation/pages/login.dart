@@ -118,6 +118,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           height: 24,
                         ),
                         MyButton(
+                          titleColor: MyColors.backgroundColor,
                           onTap: () {
                             log('clicked');
                             Functions.checkField(emailcontroller.text,

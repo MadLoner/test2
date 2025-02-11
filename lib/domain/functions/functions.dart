@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:test2/domain/services/riverpod/authprovider.dart';
+import 'package:test2/presentation/pages/home_page.dart';
 import 'package:toastification/toastification.dart';
 
 class Functions {
@@ -33,6 +34,8 @@ class Functions {
       ref.read(authProvider.notifier).state = true;
       await Auth(email, password, context);
       ref.read(authProvider.notifier).state = false;
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
     } else {
       toastification.show(
         context: context,

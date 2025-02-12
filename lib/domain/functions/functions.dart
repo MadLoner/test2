@@ -1,8 +1,11 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:test2/data/models/category_model.dart';
+import 'package:test2/data/models/sneaker_model.dart';
 import 'package:test2/domain/services/riverpod/authprovider.dart';
 import 'package:test2/presentation/pages/home_page.dart';
 import 'package:toastification/toastification.dart';
@@ -46,6 +49,28 @@ class Functions {
         autoCloseDuration: Duration(seconds: 2),
       );
     }
+  }
+
+  static Future<List<CategoryModel>> getCategories() async {
+    final supabase = GetIt.I.get<SupabaseClient>();
+
+    final categorieslist = await supabase.from('categories').select();
+    final categories = (categorieslist as List)
+        .map((item) => CategoryModel.fromMap(item))
+        .toList();
+
+    return categories.isEmpty ? List.empty() : categories;
+  }
+
+  static Future<List<SneakerModel>> getSneakers() async {
+    final supabase = GetIt.I.get<SupabaseClient>();
+
+    final sneakerslist = await supabase.from('sneakers').select();
+    final sneakers = (sneakerslist as List)
+        .map((item) => SneakerModel.fromMap(item))
+        .toList();
+
+    return sneakers.isEmpty ? List.empty() : sneakers;
   }
 
   static Future<void> Auth(

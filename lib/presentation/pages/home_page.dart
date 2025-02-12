@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:test2/data/models/category_model.dart';
+import 'package:test2/data/models/sneaker_model.dart';
+import 'package:test2/domain/functions/functions.dart';
 import 'package:test2/presentation/colors/color.dart';
+import 'package:test2/presentation/widgets/bottom_nav_bar.dart';
+import 'package:test2/presentation/widgets/category_item.dart';
+import 'package:test2/presentation/widgets/sneaker_item.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -14,6 +20,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: MyColors.backgroundColor,
       appBar: AppBar(
         forceMaterialTransparency: true,
@@ -132,21 +139,25 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
                 SizedBox(
                   height: 50,
-                  child: ListView.builder(
-                    itemCount: 3,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      List<String> titles = ['Все', 'Outdoor', 'Tennis'];
-                      return Container(
-                        width: 150,
-                        margin: EdgeInsets.only(right: 10),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: MyColors.blockColor,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(titles[index]),
-                      );
+                  child: FutureBuilder<List<CategoryModel>>(
+                    future: Functions.getCategories(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('No categories found.'));
+                      } else {
+                        final categories = snapshot.data!;
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: categories.length,
+                          itemBuilder: (context, index) {
+                            return CategoryItem(title: categories[index].name);
+                          },
+                        );
+                      }
                     },
                   ),
                 ),
@@ -172,74 +183,57 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
                 SizedBox(
                   height: 200,
-                  child: ListView.builder(
-                    itemCount: 2,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.only(right: 50),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: MyColors.blockColor,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Stack(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/unheart.svg',
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset(
-                                  'assets/sneaker_item_image.png',
-                                  width: 130,
-                                  height: 70,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Text('Best Seller'),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Text('Nike Air Max'),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Text('₽752.00'),
-                                    GestureDetector(
-                                      child: Image.asset(
-                                        'assets/add_to_cart.png',
-                                        width: 30,
-                                        height: 30,
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      );
+                  child: FutureBuilder<List<SneakerModel>>(
+                    future: Functions.getSneakers(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('No categories found.'));
+                      } else {
+                        final sneakers = snapshot.data!;
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: sneakers.length,
+                          itemBuilder: (context, index) {
+                            return SneakerItem(
+                                fullname: sneakers[index].name,
+                                price: sneakers[index].price.toString());
+                          },
+                        );
+                      }
                     },
                   ),
                 ),
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Акции',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Все',
+                      style:
+                          TextStyle(fontSize: 16, color: MyColors.accentColor),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Image.asset('assets/ad.png')
               ],
             ),
           ),
         ),
       ),
+      bottomNavigationBar: BottomNavBar(),
     );
   }
 }

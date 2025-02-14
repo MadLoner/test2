@@ -28,7 +28,6 @@ class _HomePageState extends ConsumerState<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
       backgroundColor: MyColors.backgroundColor,
       body: PageView(
         controller: pageController,

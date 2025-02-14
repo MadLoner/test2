@@ -8,7 +8,7 @@ import 'package:test2/domain/functions/functions.dart';
 import 'package:test2/presentation/colors/color.dart';
 import 'package:test2/presentation/pages/categories_page.dart';
 import 'package:test2/presentation/pages/popular_page.dart';
-import 'package:test2/presentation/widgets/bottom_nav_bar.dart';
+import 'package:test2/presentation/pages/search_page.dart';
 import 'package:test2/presentation/widgets/category_item.dart';
 import 'package:test2/presentation/widgets/sneaker_item.dart';
 
@@ -73,29 +73,32 @@ class _HomePageState extends ConsumerState<HomePage> {
                   children: [
                     Expanded(
                       child: Material(
-                        elevation: 3,
-                        shadowColor: Colors.grey,
+                        elevation: 2,
+                        shadowColor: Colors.grey[100],
                         borderRadius: BorderRadius.circular(16),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: TextField(
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              prefixIcon: Padding(
-                                padding: const EdgeInsets.only(left: 26),
-                                child: Image.asset(
-                                  'assets/Icon.png',
-                                  width: 24,
-                                  height: 24,
-                                ),
+                        child: TextField(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchPage(),
+                            ),
+                          ),
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(left: 26),
+                              child: Image.asset(
+                                'assets/Icon.png',
+                                width: 24,
+                                height: 24,
                               ),
-                              filled: true,
-                              hintText: 'Поиск',
-                              fillColor: MyColors.blockColor,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
+                            ),
+                            filled: true,
+                            hintText: 'Поиск',
+                            fillColor: MyColors.blockColor,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(16),
                             ),
                           ),
                         ),
@@ -221,6 +224,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           itemCount: sneakers.length,
                           itemBuilder: (context, index) {
                             return SneakerItem(
+                                desc: sneakers[index].description,
                                 isBestSeller: sneakers[index].bestseller,
                                 uuid: sneakers[index].id,
                                 isPopular: false,

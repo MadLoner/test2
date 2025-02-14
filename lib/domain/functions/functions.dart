@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:test2/data/models/category_model.dart';
 import 'package:test2/data/models/favorite_model.dart';
+import 'package:test2/data/models/orderSneaker_model.dart';
 import 'package:test2/data/models/popular_model.dart';
 import 'package:test2/data/models/sneaker_model.dart';
 import 'package:test2/domain/services/riverpod/authprovider.dart';
@@ -81,6 +82,29 @@ class Functions {
         .toList();
 
     return sneakers.isEmpty ? List.empty() : sneakers;
+  }
+
+  static Future<SneakerModel> getSneaker(String id) async {
+    final supabase = GetIt.I.get<SupabaseClient>();
+
+    final sneakermodel = await supabase.from('sneakers').select().eq('id', id);
+
+    final sneaker =
+        (sneakermodel as List).map((item) => SneakerModel.fromMap(item)).first;
+
+    return sneaker;
+  }
+
+  static Future<String> getCategoryName(int id) async {
+    final supabase = GetIt.I.get<SupabaseClient>();
+
+    final categorymodel =
+        await supabase.from('categories').select().eq('id', id);
+    final category = (categorymodel as List)
+        .map((item) => CategoryModel.fromMap(item))
+        .first;
+
+    return category.name;
   }
 
   static Future<void> removeSneakerFavorite(String idSneaker) async {
@@ -177,11 +201,12 @@ class Functions {
         .map((item) => FavoriteModel.fromMap(item))
         .toList();
     ids = sneakers.length + 1;
-    log(ids.toString());
     await supabase
         .from('favorites')
         .insert({'id': ids, 'sneaker': idSneaker, 'user': user});
   }
+
+  //
 
   static Future<Uint8List> getSneakerImage(String uuidSneaker) async {
     final supabase = GetIt.I.get<SupabaseClient>();
@@ -190,6 +215,26 @@ class Functions {
         await supabase.storage.from('assets').download("$uuidSneaker.png");
 
     return sneakerimage;
+  }
+
+  static Future<List<Map<String, dynamic>>> getSneakersImage() async {
+    final supabase = GetIt.I.get<SupabaseClient>();
+
+    final sneakersModel = await supabase.from('sneakers').select();
+    final sneakers = (sneakersModel as List)
+        .map((item) => SneakerModel.fromMap(item))
+        .toList();
+
+    List<Map<String, dynamic>> list = [];
+    for (var item in sneakers) {
+      final image =
+          await supabase.storage.from('assets').download('${item.id}.png');
+      list.add({
+        'image': image,
+        'id': item.id, // Добавляем ID кроссовка
+      });
+    }
+    return list;
   }
 
   static Future<List<SneakerModel>> getSneakersCategory(int categoryId) async {

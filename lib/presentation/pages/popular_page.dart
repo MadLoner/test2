@@ -87,6 +87,7 @@ class _PopularPageState extends State<PopularPage> {
                     itemCount: sneakers.length,
                     itemBuilder: (context, index) {
                       return SneakerItem(
+                          desc: sneakers[index].description,
                           isBestSeller: sneakers[index].bestseller,
                           uuid: sneakers[index].id,
                           isPopular: true,

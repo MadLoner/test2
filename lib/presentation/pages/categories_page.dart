@@ -117,6 +117,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         itemCount: sneakers.length,
                         itemBuilder: (context, index) {
                           return SneakerItem(
+                              desc: sneakers[index].description,
                               isBestSeller: sneakers[index].bestseller,
                               uuid: sneakers[index].id,
                               isPopular: true,

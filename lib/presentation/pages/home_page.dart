@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,6 +6,8 @@ import 'package:test2/data/models/category_model.dart';
 import 'package:test2/data/models/sneaker_model.dart';
 import 'package:test2/domain/functions/functions.dart';
 import 'package:test2/presentation/colors/color.dart';
+import 'package:test2/presentation/pages/categories_page.dart';
+import 'package:test2/presentation/pages/popular_page.dart';
 import 'package:test2/presentation/widgets/bottom_nav_bar.dart';
 import 'package:test2/presentation/widgets/category_item.dart';
 import 'package:test2/presentation/widgets/sneaker_item.dart';
@@ -154,7 +157,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                           scrollDirection: Axis.horizontal,
                           itemCount: categories.length,
                           itemBuilder: (context, index) {
-                            return CategoryItem(title: categories[index].name);
+                            return CategoryItem(
+                              isSelected: false,
+                              title: categories[index].name,
+                              onTap: () => Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (context) => CategoriesPage(
+                                      catIndex: index,
+                                      title: categories[index].name),
+                                ),
+                              ),
+                            );
                           },
                         );
                       }
@@ -171,11 +185,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                       'Популярное',
                       style: TextStyle(fontSize: 16),
                     ),
-                    Text(
-                      'Все',
-                      style:
-                          TextStyle(fontSize: 16, color: MyColors.accentColor),
-                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PopularPage(),
+                        ),
+                      ),
+                      child: Text(
+                        'Все',
+                        style: TextStyle(
+                            fontSize: 16, color: MyColors.accentColor),
+                      ),
+                    )
                   ],
                 ),
                 SizedBox(
@@ -184,7 +206,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 SizedBox(
                   height: 200,
                   child: FutureBuilder<List<SneakerModel>>(
-                    future: Functions.getSneakers(),
+                    future: Functions.getPopularSneakers(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator());
@@ -199,6 +221,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                           itemCount: sneakers.length,
                           itemBuilder: (context, index) {
                             return SneakerItem(
+                                isBestSeller: sneakers[index].bestseller,
+                                uuid: sneakers[index].id,
+                                isPopular: false,
                                 fullname: sneakers[index].name,
                                 price: sneakers[index].price.toString());
                           },
@@ -233,7 +258,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavBar(),
     );
   }
 }
